@@ -16,6 +16,7 @@ SELECT
         , coach_nationality 
         , safe_cast(coach_contract_start as date) as coach_contract_start
         , safe_cast(coach_contract_until as date) as coach_contract_end
+        , last_modified
 FROM ${ref('epl_football_data','epl_team_data')}
 )
 

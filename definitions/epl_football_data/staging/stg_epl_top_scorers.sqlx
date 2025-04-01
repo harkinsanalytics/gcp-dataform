@@ -12,6 +12,7 @@ SELECT
         , goals
         , assists
         , safe_cast(penalties as int64) as penalties
+        , last_modified
 FROM   ${ref("epl_football_data", "epl_top_scorers")}
 )
 

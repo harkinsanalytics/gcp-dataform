@@ -12,6 +12,7 @@ SELECT
     , player_name
     , player_position
     , player_nationality
+    , last_modified
 FROM ${ref('epl_football_data', 'epl_squad_data')}
 )
 
