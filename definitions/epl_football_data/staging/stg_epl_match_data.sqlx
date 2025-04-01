@@ -1,21 +1,22 @@
 config {
     type: "table",
-    schema: "transformed_epl"
+    database: "transformed-football",
+    schema: "epl"
 }
 
 WITH t1 as (
     SELECT
           id
-        , utcDate
+        , safe_cast(utcDate as date) as match_date
         , status
         , matchday
-        , season_start_date
-        , season_end_date
+        , safe_cast(season_start_date as date) as season_start_date
+        , safe_cast(season_end_date as date) as season_end_date
         , season_winner
-        , season_current_matchday
-        , hometeam_id
+        , cast(season_current_matchday as int64) as season_current_matchday
+        , cast(hometeam_id as int64) as hometeam_id
         , hometeam_tla
-        , awayteam_id
+        , safe_cast(awayteam_id as int64) as awayteam_id 
         , awayteam_tla
         , score_winner
         , score_duration
