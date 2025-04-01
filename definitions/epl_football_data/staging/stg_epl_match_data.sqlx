@@ -1,7 +1,7 @@
 config {
     type: "table",
     database: "transformed-football-data",
-    schema: "epl"
+    schema: "staging_epl"
 }
 
 WITH t1 as (
