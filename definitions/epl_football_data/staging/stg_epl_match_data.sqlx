@@ -1,6 +1,6 @@
 config {
     type: "table",
-    database: "transformed_football_data",
+    database: "transformed-football-data",
     schema: "epl"
 }
 
