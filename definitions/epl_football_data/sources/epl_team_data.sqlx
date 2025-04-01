@@ -1,0 +1,7 @@
+config {
+    type: "declaration",
+    database: "football-data-455418",
+    schema: "epl_football_data",
+    name: "epl_team_data"
+    
+}

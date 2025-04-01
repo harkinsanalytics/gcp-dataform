@@ -1,0 +1,23 @@
+config {
+    type: "table",
+    database: "transformed-football-data",
+    schema: "staging_epl"
+}
+
+WITH t1 as (
+SELECT 
+          name as team_name
+        , shortName as team_short_name
+        , tla as team_tla
+        , founded as team_founded
+        , coach_firstname as coach_first_name
+        , coach_lastname as coach_last_name
+        , coach_name as coach_full_name
+        , coach_nationality 
+        , safe_cast(coach_contract_start as date) as coach_contract_start
+        , safe_cast(coach_contract_until as date) as coach_contract_end
+FROM ${ref('epl_football_data','epl_team_data')}
+)
+
+SELECT *
+FROM t1 
