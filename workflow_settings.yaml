@@ -1,0 +1,5 @@
+defaultProject: football-data-455418
+defaultLocation: US
+defaultDataset: transformed
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.0

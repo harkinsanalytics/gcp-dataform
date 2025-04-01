@@ -1,0 +1,7 @@
+{
+  "defaultSchema": "transformed",
+  "assertionSchema": "dataform_assertions",
+  "warehouse": "bigquery",
+  "defaultDatabase": "football-data-455418",
+  "defaultLocation": "US"
+}
