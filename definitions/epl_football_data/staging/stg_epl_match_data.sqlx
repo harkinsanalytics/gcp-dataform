@@ -1,0 +1,30 @@
+config {
+    type: "table",
+    schema: "transformed_epl"
+}
+
+WITH t1 as (
+    SELECT
+          id
+        , utcDate
+        , status
+        , matchday
+        , season_start_date
+        , season_end_date
+        , season_winner
+        , season_current_matchday
+        , hometeam_id
+        , hometeam_tla
+        , awayteam_id
+        , awayteam_tla
+        , score_winner
+        , score_duration
+        , score_full_time_hometeam
+        , score_full_time_awayteam
+        , score_halftime_hometeam
+        , score_halftime_awayteam
+    FROM ${ref("epl_football_data", "epl_match_data")}
+)
+
+SELECT *
+FROM t1
