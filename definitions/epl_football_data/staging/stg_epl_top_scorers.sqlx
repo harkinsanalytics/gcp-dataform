@@ -1,0 +1,19 @@
+config {
+    type: "table",
+    database: "transformed-football-data",
+    schema: "staging_epl"
+}
+
+WITH t1 as (
+SELECT
+          player_id
+        , team_id
+        , playedMatches as matches_played
+        , goals
+        , assists
+        , safe_cast(penalties as int64) as penalties
+FROM   ${ref("epl_football_data", "epl_top_scorers")}
+)
+
+SELECT *
+FROM t1 
