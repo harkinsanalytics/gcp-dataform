@@ -6,7 +6,8 @@ config {
 
 WITH t1 as (
 SELECT 
-          name as team_name
+          id as team_id
+        , name as team_name
         , shortName as team_short_name
         , tla as team_tla
         , founded as team_founded
