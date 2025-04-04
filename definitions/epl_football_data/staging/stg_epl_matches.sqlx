@@ -7,11 +7,11 @@ config {
 WITH t1 as (
     SELECT
           id as match_id
-        , safe_cast(utcDate as date) as match_date
+        , date(safe_cast(utcDate as date),"America/New_York") as match_date
         , status as match_status
         , matchday
-        , safe_cast(season_start_date as date) as season_start_date
-        , safe_cast(season_end_date as date) as season_end_date
+        , date(safe_cast(season_start_date as date),"America/New_York") as season_start_date
+        , date(safe_cast(season_end_date as date),"America/New_York") as season_end_date
         , season_winner
         , cast(season_current_matchday as int64) as season_current_matchday
         , cast(hometeam_id as int64) as hometeam_id
