@@ -1,0 +1,30 @@
+config {
+    type: "incremental",
+    database: "transformed-football-data",
+    schema: "snapshots"
+    
+}
+
+WITH t1 as (
+    SELECT
+          date(CURRENT_DATE('America/New_York')) as snapshot_date 
+        , team_id
+        , team_name
+        , team_short_name
+        , team_tla
+        , team_founded
+        , coach_first_name
+        , coach_last_name
+        , coach_full_name
+        , coach_nationality 
+        , coach_contract_start
+        , coach_contract_end
+        , last_modified
+FROM ${ref("stg_epl_teams")}
+${ when(incremental(), 
+        `WHERE CURRENT_DATE('America/New_York') > (select max(snapshot_date) FROM ${self()})`) }
+)
+
+
+SELECT *
+FROM t1
