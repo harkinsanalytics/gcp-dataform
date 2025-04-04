@@ -1,7 +1,8 @@
 config {
     type: "incremental",
     database: "transformed-football-data",
-    schema: "snapshots"
+    schema: "snapshots",
+    tags: "weekly"
     
 }
 
