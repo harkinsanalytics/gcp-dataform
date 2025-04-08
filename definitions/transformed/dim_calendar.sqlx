@@ -1,0 +1,50 @@
+config {
+    type: "table",
+    schema: "transformed"
+}
+
+WITH T1 as (
+SELECT
+  FORMAT_DATE('%F', d) as id,
+  d AS cal_date,
+  EXTRACT(YEAR FROM d) AS year,
+  EXTRACT(WEEK FROM d) AS year_week,
+  EXTRACT(DAY FROM d) AS year_day,
+  EXTRACT(YEAR FROM d) AS fiscal_year,
+  FORMAT_DATE('%Q', d) as fiscal_qtr,
+  EXTRACT(MONTH FROM d) AS month,
+  FORMAT_DATE('%B', d) as month_name,
+  FORMAT_DATE('%w', d) AS week_day,
+  FORMAT_DATE('%A', d) AS day_name,
+  (CASE WHEN FORMAT_DATE('%A', d) IN ('Sunday', 'Saturday') THEN 0 ELSE 1 END) AS day_is_weekday,
+
+FROM (
+  SELECT
+    *
+  FROM
+    UNNEST(GENERATE_DATE_ARRAY('2010-01-01', '2050-01-01', INTERVAL 1 DAY)) AS d )
+)
+
+, t2 as (
+  SELECT 
+     *
+    , date_trunc(cal_date,month) as cal_month
+    , date_trunc(cal_date,quarter) as cal_quarter
+    , date_trunc(cal_date,year) as cal_year
+    , date_trunc(cal_date,week) as cal_week
+    , row_number() over (partition by concat(fiscal_year,month) order by cal_date DESC) as row_num
+FROM t1
+WHERE 1=1
+ORDER BY cal_date
+)
+
+SELECT 
+      * except (row_num)
+    , CASE WHEN row_num = 1 THEN 1 ELSE 0 END as end_of_month
+    , CASE WHEN row_num = 1 AND month IN (3,6,9,12) THEN 1 ELSE 0 END as end_of_qtr
+    , lead(year_week) OVER (ORDER BY id) as year_week_saturday
+    , concat(month_name, "_",fiscal_year) as financials_month_year
+    , concat(fiscal_year,"_",SUBSTR(cast(cal_month as string),6,2)) as qgiv_financials_month_year
+    , concat(fiscal_year,"-",SUBSTR(cast(cal_month as string),6,2)) as stripe_financials_month_year
+FROM t2
+WHERE 1=1
