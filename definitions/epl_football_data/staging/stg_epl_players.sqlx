@@ -4,7 +4,7 @@ config {
     schema: "staging_epl"
 }
 
-WITH t1 as (
+WITH players as (
 SELECT
       team_id
     , team_name
@@ -17,4 +17,4 @@ FROM ${ref('epl_football_data', 'epl_squad_data')}
 )
 
 SELECT *
-FROM t1
+FROM players
