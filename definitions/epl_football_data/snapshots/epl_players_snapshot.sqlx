@@ -23,4 +23,4 @@ ${ when(incremental(),
 
 
 SELECT *
-FROM t1
+FROM t1 
