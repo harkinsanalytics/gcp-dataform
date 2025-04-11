@@ -21,6 +21,6 @@ ${ when(incremental(),
         `WHERE CURRENT_DATE('America/New_York') > (select max(snapshot_date) FROM ${self()})`) }
 )
 
-
+ 
 SELECT *
 FROM t1
