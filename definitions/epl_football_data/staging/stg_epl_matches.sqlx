@@ -1,7 +1,8 @@
 config {
     type: "table",
     database: "transformed-football-data",
-    schema: "staging_epl"
+    schema: "staging_epl",
+    tags: "daily"
 }
 
 WITH matches as (
