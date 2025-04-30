@@ -1,0 +1,92 @@
+config {
+    type: "table",
+    database: "transformed-football-data",
+    schema: "staging_epl",
+    tags: "daily"
+}
+
+WITH hometeam as (
+SELECT 
+      match_id
+    , match_status
+    , matchday
+    , season_current_matchday
+    , hometeam_id as team_id
+    , hometeam_tla as team_tla
+    , 'HOME_TEAM' as home_away
+    , score_full_time_hometeam as score_fulltime
+    , score_halftime_hometeam as score_halftime
+    , score_winner
+FROM ${ref("stg_epl_matches")}
+WHERE 1=1
+)
+
+, awayteam as (
+SELECT 
+      match_id
+    , match_status
+    , matchday
+    , season_current_matchday
+    , awayteam_id as team_id
+    , awayteam_tla as team_tla
+    , 'AWAY_TEAM' as home_away
+    , score_full_time_awayteam as score_fulltime
+    , score_halftime_awayteam as score_halftime
+    , score_winner
+FROM ${ref("stg_epl_matches")}
+WHERE 1=1
+)
+
+, unioned_data as (
+SELECT *
+FROM hometeam
+UNION ALL
+SELECT *
+FROM awayteam
+)
+
+, points as (
+SELECT 
+    ud.match_id
+  , ud.matchday
+  , ud.team_id
+  , ud.team_tla
+  , t.team_name
+  , ud.home_away
+  , ud.score_fulltime
+  , ud.score_winner
+  , sum(ud.score_halftime) OVER (PARTITION BY ud.team_id ORDER BY ud.matchday ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as halftime_goals_scored
+  , sum(ud.score_fulltime) OVER (PARTITION BY ud.team_id ORDER BY ud.matchday ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as total_goals_scored
+  , CASE WHEN ud.score_winner = ud.home_away THEN 3
+         WHEN ud.score_winner = 'DRAW' THEN 1
+         ELSE 0 END as points_earned
+FROM unioned_data ud      
+LEFT JOIN ${ref("stg_epl_teams")} t  
+ON ud.team_id = t.team_id
+WHERE 1=1
+--AND
+)
+
+, goals_conceded as (
+SELECT
+      p.*
+    , sum(p.points_earned) OVER (PARTITION BY p.team_id ORDER BY p.matchday ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as total_points_earned
+    , pp.score_fulltime as goals_conceded
+    , sum(pp.score_fulltime) OVER (PARTITION BY p.team_id ORDER BY p.matchday ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) as total_goals_conceded
+FROM points p
+JOIN points pp 
+ON p.match_id = pp.match_id AND p.team_id != pp.team_id
+)
+
+SELECT 
+      matchday
+    , team_tla 
+    , team_name 
+    , total_points_earned
+    , total_goals_scored
+    , total_goals_conceded
+    , (total_goals_scored-total_goals_conceded) as goal_differential
+FROM goals_conceded
+WHERE 1=1
+AND matchday = 33
+ORDER BY 1, 4 DESC, 7 DESC, 5 DESC, 3
