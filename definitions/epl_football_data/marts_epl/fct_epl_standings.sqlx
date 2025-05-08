@@ -1,7 +1,7 @@
 config {
     type: "table",
     database: "transformed-football-data",
-    schema: "staging_epl",
+    schema: "marts_epl",
     tags: "daily"
 }
 
